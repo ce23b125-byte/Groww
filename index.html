@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PitchDay</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Host+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="app" class="app-shell">
+    <!-- Top Bar -->
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div class="brand">
+          <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M7 20V6" />
+            <path d="M12 20V6" />
+            <path d="M17 20V6" />
+            <path d="M6 6h12" />
+          </svg>
+          <div>
+            <span class="brand-name">PitchDay</span>
+            <span id="header-subtitle" class="brand-sub">Saturday Turf Session · 14:00–16:30</span>
+          </div>
+        </div>
+
+        <div style="display:flex; align-items:center; gap:8px;">
+          <button id="btn-room-pill" class="pill-link hidden" title="Copy Room Code"></button>
+          <button id="btn-menu-drawer" class="menu-trigger" aria-label="Open menu">
+            <span id="menu-avatar" class="avatar-dot">A</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main id="main-content" class="main-container"></main>
+
+    <!-- Bottom Tab Bar -->
+    <nav class="bottom-nav" aria-label="Primary Navigation">
+      <button class="tab-item active" data-tab="gameday">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        <span>GameDay</span>
+      </button>
+      <button class="tab-item" data-tab="matches">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8.5 8.5l7 7"/><path d="M15.5 8.5l-7 7"/></svg>
+        <span>Matches</span>
+      </button>
+      <button class="tab-item" data-tab="pay">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+        <span>Pay</span>
+      </button>
+    </nav>
+
+    <!-- Toast -->
+    <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+
+    <!-- Side Drawer (Profile / Settings / Help) -->
+    <div id="drawer-backdrop" class="drawer-backdrop hidden">
+      <aside id="side-drawer" class="side-drawer" role="dialog" aria-modal="true" aria-label="Account and Settings">
+        <div class="drawer-header">
+          <div class="drawer-tabs">
+            <button class="drawer-tab active" data-drawer="profile">Profile</button>
+            <button class="drawer-tab" data-drawer="settings">Settings</button>
+            <button class="drawer-tab" data-drawer="help">Help</button>
+          </div>
+          <button id="drawer-close" class="close-btn" aria-label="Close">&times;</button>
+        </div>
+        <div id="drawer-body" class="drawer-body"></div>
+      </aside>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
