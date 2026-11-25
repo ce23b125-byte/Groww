@@ -7,6 +7,9 @@ let userProfile = JSON.parse(localStorage.getItem('pitchday_profile') || 'null')
   upiId: '',
 };
 let entryError = '';
+let entryNudgeTimer = null;
+let entryNudgeDismissed = false;
+let showEntryNudge = false;
 let activeTab = 'gameday'; // 'gameday' | 'matches' | 'pay'
 let gamedaySub = 'roster'; // 'roster' | 'turf' | 'teams'
 let drawerTab = 'profile'; // 'profile' | 'settings' | 'help'
@@ -187,7 +190,7 @@ function saveLocalProfile() {
 async function enterRoom(code, isNewJoin = true) {
   const clean = String(code || '').trim().toUpperCase();
   if (!clean) {
-    entryError = 'Enter a room code.';
+    entryError = 'Enter a room code, or type TURF84 to open the demo session.';
     return render();
   }
   entryError = '';
@@ -199,12 +202,14 @@ async function enterRoom(code, isNewJoin = true) {
   } : undefined);
 
   if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    entryError = err.error || `Room "${clean}" not found.`;
+    entryError = `Room "${clean}" not found. Enter TURF84 to explore the demo session, or host a new game below.`;
     currentRoomCode = '';
     localStorage.removeItem('pitchday_room');
     return render();
   }
+
+  clearTimeout(entryNudgeTimer);
+  showEntryNudge = false;
 
   const data = await res.json();
   state = data.room || data;
@@ -237,6 +242,10 @@ function leaveRoom() {
   currentRoomCode = '';
   state = null;
   entryError = '';
+  showEntryNudge = false;
+  entryNudgeDismissed = false;
+  clearTimeout(entryNudgeTimer);
+  entryNudgeTimer = null;
   localStorage.removeItem('pitchday_room');
   $('#drawer-backdrop').classList.add('hidden');
   render();
@@ -362,8 +371,12 @@ function render() {
     roomPill.classList.add('hidden');
     $('#main-content').innerHTML = renderEntry();
     bindEntryEvents();
+    scheduleEntryNudge();
     return;
   }
+
+  clearTimeout(entryNudgeTimer);
+  showEntryNudge = false;
 
   $('#header-subtitle').textContent = `${state.meta.title} · ${state.meta.slotStart}–${state.meta.slotEnd}`;
   bottomNav.classList.remove('hidden');
@@ -382,9 +395,36 @@ function render() {
   bindEvents();
 }
 
+function scheduleEntryNudge() {
+  if (entryNudgeDismissed || showEntryNudge || entryNudgeTimer) return;
+  entryNudgeTimer = setTimeout(() => {
+    entryNudgeTimer = null;
+    if (!currentRoomCode && !state && !entryNudgeDismissed) {
+      showEntryNudge = true;
+      render();
+    }
+  }, 15000);
+}
+
 /* ==================== ONBOARDING & ROOM ENTRY ==================== */
 function renderEntry() {
   return `
+    ${showEntryNudge ? `
+      <div class="nudge-backdrop" id="nudge-backdrop">
+        <div class="nudge-card" role="dialog" aria-modal="true" aria-label="Try Demo Session">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span class="badge badge-accent">Quick Tour</span>
+            <button class="close-btn" id="btn-nudge-close" aria-label="Close">&times;</button>
+          </div>
+          <div style="font-size:17px; font-weight:600; letter-spacing:-0.015em;">Not sure which room code to enter?</div>
+          <div class="muted" style="font-size:13px; line-height:1.45;">
+            Open our pre-loaded demo session (<strong>TURF84</strong>) to see teams, live scoring, and expense splits in action.
+          </div>
+          <button class="btn btn-primary" id="btn-nudge-demo">Open Demo Session (TURF84)</button>
+          <button class="btn" id="btn-nudge-dismiss">I'll enter my own room</button>
+        </div>
+      </div>
+    ` : ''}
     <div class="entry-wrap">
       <div class="entry-hero">
         <h1>One room for your turf day.</h1>
@@ -508,6 +548,27 @@ function bindEntryEvents() {
       enterRoom('TURF84', false);
     };
   }
+
+  const nudgeDemo = $('#btn-nudge-demo');
+  if (nudgeDemo) {
+    nudgeDemo.onclick = () => {
+      syncInlineProfile();
+      showEntryNudge = false;
+      entryNudgeDismissed = true;
+      enterRoom('TURF84', false);
+    };
+  }
+  const dismissNudge = () => {
+    showEntryNudge = false;
+    entryNudgeDismissed = true;
+    render();
+  };
+  const nudgeClose = $('#btn-nudge-close');
+  const nudgeDismiss = $('#btn-nudge-dismiss');
+  const nudgeBackdrop = $('#nudge-backdrop');
+  if (nudgeClose) nudgeClose.onclick = dismissNudge;
+  if (nudgeDismiss) nudgeDismiss.onclick = dismissNudge;
+  if (nudgeBackdrop) nudgeBackdrop.onclick = (e) => { if (e.target === nudgeBackdrop) dismissNudge(); };
 
   const hostForm = $('#form-host-room');
   if (hostForm) {

@@ -689,6 +689,30 @@ body {
   color: var(--muted);
 }
 
+/* 15s Demo Nudge Modal */
+.nudge-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 19, 20, 0.36);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 55;
+}
+
+.nudge-card {
+  width: 100%;
+  max-width: 360px;
+  background: var(--bg);
+  border: 1px solid var(--ink);
+  border-radius: var(--radius-surface);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
 /* Toast */
 .toast {
   position: fixed;
