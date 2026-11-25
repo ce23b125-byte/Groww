@@ -601,18 +601,18 @@ function renderRoster() {
       <div>
         ${state.players.map((p) => `
           <div class="player-card-row">
-            <div class="player-card-left">
-              <strong>${esc(p.name)}</strong>
-              <div class="muted">${esc(p.role)}</div>
+            <div class="player-row-top">
+              <div>
+                <strong>${esc(p.name)}</strong>
+                <span class="muted"> · ${esc(p.role)}</span>
+              </div>
+              <a class="btn btn-sm" href="tel:${esc(p.phone || '')}" data-call-player="${p.id}" style="text-decoration:none;">Call</a>
             </div>
-            <div class="player-card-right">
-              <div style="display:flex; align-items:center; gap:6px;">
-                <div class="seg-group">
-                  <button class="seg-btn ${p.rsvp === 'in' ? 'active-accent' : ''}" data-rsvp="${p.id}:in">In</button>
-                  <button class="seg-btn ${p.rsvp === 'maybe' ? 'active-dark' : ''}" data-rsvp="${p.id}:maybe">Maybe</button>
-                  <button class="seg-btn ${p.rsvp === 'out' ? 'active-muted' : ''}" data-rsvp="${p.id}:out">Out</button>
-                </div>
-                <a class="btn btn-sm" href="tel:${esc(p.phone || '')}" data-call-player="${p.id}" style="text-decoration:none;">Call</a>
+            <div class="player-row-bottom">
+              <div class="seg-group">
+                <button class="seg-btn ${p.rsvp === 'in' ? 'active-accent' : ''}" data-rsvp="${p.id}:in">In</button>
+                <button class="seg-btn ${p.rsvp === 'maybe' ? 'active-dark' : ''}" data-rsvp="${p.id}:maybe">Maybe</button>
+                <button class="seg-btn ${p.rsvp === 'out' ? 'active-muted' : ''}" data-rsvp="${p.id}:out">Out</button>
               </div>
               ${p.rsvp !== 'out' ? `
                 <div class="seg-group">
@@ -624,15 +624,19 @@ function renderRoster() {
           </div>
         `).join('')}
       </div>
-      <form id="form-add-player" class="inline-form">
-        <input class="input input-grow" name="name" placeholder="Add player name" required />
-        <input class="input" name="phone" placeholder="Phone (optional)" style="width:140px" />
-        <select class="select" name="role">
-          <option>All-rounder</option>
-          <option>Batsman</option>
-          <option>Bowler</option>
-        </select>
-        <button class="btn btn-primary" type="submit">Add</button>
+      <form id="form-add-player" style="display:flex; flex-direction:column; gap:8px; margin-top:14px;">
+        <div style="display:flex; gap:8px;">
+          <input class="input input-grow" name="name" placeholder="Player name" required />
+          <select class="select" name="role">
+            <option>All-rounder</option>
+            <option>Batsman</option>
+            <option>Bowler</option>
+          </select>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <input class="input input-grow" name="phone" placeholder="Phone (optional)" />
+          <button class="btn btn-primary" type="submit">Add Player</button>
+        </div>
       </form>
     </div>
   `;

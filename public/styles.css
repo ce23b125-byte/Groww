@@ -293,24 +293,19 @@ body {
 }
 
 .player-card-row {
-  padding: 11px 0;
+  padding: 12px 0;
   border-bottom: 1px solid var(--hairline);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.player-row-top,
+.player-row-bottom {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
-}
-
-.player-card-left {
-  min-width: 0;
-}
-
-.player-card-right {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 6px;
-  flex-shrink: 0;
+  gap: 8px;
 }
 
 .player-card-row:last-child {
