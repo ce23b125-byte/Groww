@@ -543,29 +543,28 @@ function renderGameDay() {
 
   return `
     <div class="dark-strip">
-      <div>
-        <div class="muted">Booked Slot · ${esc(state.meta.slotStart)}–${esc(state.meta.slotEnd)}</div>
-        <div style="display:flex; align-items:center; gap:8px; margin-top:4px;">
-          <strong class="num" style="font-size:18px; font-weight:500;">${confirmed.length} / ${state.meta.minPlayers} players</strong>
-          <span class="badge badge-accent">${gameOn ? 'Game On' : `Need ${state.meta.minPlayers - confirmed.length} more`}</span>
+      <div class="strip-row">
+        <div>
+          <div class="muted">Slot · ${esc(state.meta.slotStart)}–${esc(state.meta.slotEnd)}</div>
+          <strong class="num" style="font-size:17px; font-weight:500;">${confirmed.length} / ${state.meta.minPlayers} players</strong>
         </div>
+        <span class="badge badge-accent">${gameOn ? 'Game On' : `Need ${state.meta.minPlayers - confirmed.length}`}</span>
       </div>
 
-      <div>
-        <div class="muted">Turf Time Remaining</div>
-        <div style="display:flex; align-items:center; gap:8px; margin-top:4px;">
-          <strong id="slot-clock-display" class="num" style="font-size:18px; font-weight:500;">${formatClock(slotTimerSeconds)}</strong>
-          <button class="btn btn-sm" id="btn-toggle-clock">${slotTimerRunning ? 'Pause' : 'Start'}</button>
+      <div class="strip-row" style="border-top:1px solid #2b2a2b; padding-top:10px;">
+        <div>
+          <div class="muted">Turf Time Left</div>
+          <div style="display:flex; align-items:center; gap:8px; margin-top:2px;">
+            <strong id="slot-clock-display" class="num" style="font-size:16px; font-weight:500;">${formatClock(slotTimerSeconds)}</strong>
+            <button class="btn btn-sm" id="btn-toggle-clock">${slotTimerRunning ? 'Pause' : 'Start'}</button>
+          </div>
         </div>
-      </div>
-
-      <div>
-        <div class="muted">1-Hr Reminder (${alarmTime})</div>
-        <div style="display:flex; align-items:center; gap:8px; margin-top:4px;">
-          <button class="btn btn-sm ${state.meta.alarm1HrEnabled ? 'btn-primary' : ''}" id="btn-toggle-alarm">
-            ${state.meta.alarm1HrEnabled ? 'On' : 'Off'}
-          </button>
-          <button class="btn btn-sm" id="btn-test-alarm">Test Alert</button>
+        <div style="text-align:right;">
+          <div class="muted">1-Hr Alarm (${alarmTime})</div>
+          <div style="display:flex; align-items:center; gap:6px; justify-content:flex-end; margin-top:2px;">
+            <button class="btn btn-sm ${state.meta.alarm1HrEnabled ? 'btn-primary' : ''}" id="btn-toggle-alarm">${state.meta.alarm1HrEnabled ? 'On' : 'Off'}</button>
+            <button class="btn btn-sm" id="btn-test-alarm">Test</button>
+          </div>
         </div>
       </div>
     </div>
@@ -587,16 +586,19 @@ function renderRoster() {
     <div>
       <div class="section-head">
         <span class="section-title">Players (${state.players.filter((p) => p.rsvp === 'in').length} In · ${state.players.filter(isAvailable).length} Here)</span>
-        <button class="btn btn-sm" id="btn-copy-invite">Copy Invite & Code</button>
+        <button class="btn btn-sm" id="btn-copy-invite">Invite & Code</button>
       </div>
       <div>
         ${state.players.map((p) => `
-          <div class="row-item">
-            <div>
-              <strong>${esc(p.name)}</strong>
-              <span class="muted"> · ${esc(p.role)}</span>
+          <div class="player-card-row">
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
+              <div>
+                <strong>${esc(p.name)}</strong>
+                <span class="muted"> · ${esc(p.role)}</span>
+              </div>
+              <a class="btn btn-sm" href="tel:${esc(p.phone || '')}" data-call-player="${p.id}" style="text-decoration:none;">Call</a>
             </div>
-            <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:6px; flex-wrap:wrap;">
               <div class="seg-group">
                 <button class="seg-btn ${p.rsvp === 'in' ? 'active-accent' : ''}" data-rsvp="${p.id}:in">In</button>
                 <button class="seg-btn ${p.rsvp === 'maybe' ? 'active-dark' : ''}" data-rsvp="${p.id}:maybe">Maybe</button>
@@ -608,7 +610,6 @@ function renderRoster() {
                 <button class="seg-btn ${p.status === 'left_early' ? 'active-dark' : ''}" data-checkin="${p.id}:left_early">Left</button>
                 <button class="seg-btn ${!p.checkedIn ? 'active-muted' : ''}" data-checkin="${p.id}:absent">Out</button>
               </div>
-              <a class="btn btn-sm" href="tel:${esc(p.phone || '')}" data-call-player="${p.id}" style="text-decoration:none;">Call</a>
             </div>
           </div>
         `).join('')}
@@ -736,7 +737,7 @@ function renderTeamsAndRules() {
 
     <div class="split-2">
       <div>
-        <div class="split-2" style="gap:16px;">
+        <div class="row-2col" style="gap:12px;">
           <div>
             <div style="font-weight:600; font-size:13px; color:var(--accent); margin-bottom:6px;">Team A (${teamA.length})</div>
             ${teamA.map((p) => `
@@ -843,15 +844,17 @@ function renderMatches() {
 
   return `
     <div class="dark-strip">
-      <div>
-        <div class="muted">Series</div>
-        <strong class="num" style="font-size:18px; font-weight:500;">Team A ${winsA} – ${winsB} Team B</strong>
-      </div>
-      <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-        <select class="select" id="select-match">
-          ${state.series.matches.map((m, i) => `<option value="${i}" ${i === mIdx ? 'selected' : ''}>${esc(m.name)} (${m.status})</option>`).join('')}
-        </select>
-        <button class="btn btn-sm btn-primary" id="btn-new-match">+ Match</button>
+      <div class="strip-row">
+        <div>
+          <div class="muted">Series</div>
+          <strong class="num" style="font-size:16px; font-weight:500;">Team A ${winsA} – ${winsB} Team B</strong>
+        </div>
+        <div style="display:flex; align-items:center; gap:6px;">
+          <select class="select" id="select-match" style="min-height:32px; padding:4px 8px; font-size:12px;">
+            ${state.series.matches.map((m, i) => `<option value="${i}" ${i === mIdx ? 'selected' : ''}>${esc(m.name)} (${m.status})</option>`).join('')}
+          </select>
+          <button class="btn btn-sm btn-primary" id="btn-new-match">+ Match</button>
+        </div>
       </div>
     </div>
 
@@ -875,7 +878,7 @@ function renderMatches() {
           </div>
         </div>
 
-        <div class="split-2" style="margin-top:16px; gap:10px;">
+        <div class="row-2col" style="margin-top:12px;">
           <div class="field-group">
             <label class="field-label">Striker * (Team ${inn.battingTeam})</label>
             <select class="select" id="sel-striker">
@@ -1059,106 +1062,148 @@ function computeSettlement() {
   let i = 0, j = 0;
   while (i < debtors.length && j < creditors.length) {
     const amt = Math.min(debtors[i].rem, creditors[j].rem);
-    if (amt > 0) transfers.push({ fromId: debtors[i].id, from: debtors[i].name, to: creditors[j].name, amount: Math.round(amt) });
+    if (amt > 0) {
+      transfers.push({
+        fromId: debtors[i].id,
+        from: debtors[i].name,
+        toId: creditors[j].id,
+        to: creditors[j].name,
+        amount: Math.round(amt),
+      });
+    }
     debtors[i].rem -= amt;
     creditors[j].rem -= amt;
     if (debtors[i].rem <= 1) i++;
     if (creditors[j].rem <= 1) j++;
   }
 
-  return { attendees, totalSpend, ledger, transfers };
+  const c = state.meta.currency;
+  const actionMap = {};
+  ledger.forEach((p) => {
+    const outgoing = transfers.filter((t) => t.fromId === p.id);
+    const incoming = transfers.filter((t) => t.toId === p.id);
+    if (outgoing.length > 0) {
+      actionMap[p.id] = outgoing.map((t) => `Pay ${t.to} ${c}${t.amount}`).join(', ');
+    } else if (incoming.length > 0) {
+      actionMap[p.id] = incoming.map((t) => `From ${t.from} ${c}${t.amount}`).join(', ');
+    } else {
+      actionMap[p.id] = 'Settled';
+    }
+  });
+
+  return { attendees, totalSpend, ledger, transfers, actionMap };
 }
 
 function renderPay() {
-  const { attendees, totalSpend, ledger, transfers } = computeSettlement();
+  const { attendees, totalSpend, ledger, transfers, actionMap } = computeSettlement();
   const c = state.meta.currency;
+
+  const me = attendees.find((p) => userProfile.name && p.name.toLowerCase() === userProfile.name.toLowerCase()) || attendees[0];
+  const myOutgoing = me ? transfers.filter((t) => t.fromId === me.id) : [];
+  const myIncoming = me ? transfers.filter((t) => t.toId === me.id) : [];
+
+  let myBanner = 'All settled';
+  if (me) {
+    if (myOutgoing.length > 0) {
+      myBanner = `${me.name}: Pay ${myOutgoing.map((t) => `${t.to} (${c}${t.amount})`).join(' & ')}`;
+    } else if (myIncoming.length > 0) {
+      myBanner = `${me.name}: Collect ${myIncoming.map((t) => `${c}${t.amount} from ${t.from}`).join(', ')}`;
+    } else {
+      myBanner = `${me.name}: Settled up`;
+    }
+  }
 
   return `
     <div class="dark-strip">
-      <div>
-        <div class="muted num">${attendees.length} attendees</div>
-        <div class="score-big num" style="margin-top:4px;">${esc(c)}${totalSpend}</div>
+      <div class="strip-row">
+        <div>
+          <div class="muted num">${attendees.length} attendees</div>
+          <div class="score-big num" style="margin-top:2px;">${esc(c)}${totalSpend}</div>
+        </div>
+        <button class="btn btn-sm btn-primary" id="btn-copy-settlement">Copy Summary</button>
       </div>
-      <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+      <div class="strip-row" style="border-top:1px solid #2b2a2b; padding-top:10px;">
         <div class="seg-group">
           <button class="seg-btn ${state.splitSettings.mode === 'equal' ? 'active-accent' : ''}" data-split-mode="equal">Equal</button>
           <button class="seg-btn ${state.splitSettings.mode === 'prorated' ? 'active-accent' : ''}" data-split-mode="prorated">By Attendance</button>
         </div>
-        <button class="btn btn-sm btn-primary" id="btn-copy-settlement">Copy Summary</button>
       </div>
     </div>
 
-    <div class="split-2">
-      <div>
-        <div class="section-head">
-          <span class="section-title">Expenses</span>
-        </div>
-        ${state.expenses.length === 0 ? '<div class="muted">No expenses logged yet.</div>' : state.expenses.map((e) => `
-          <div class="row-item">
-            <div>
-              <strong>${esc(e.title)}</strong>
-              <div class="muted">${esc(playerName(e.paidBy))} · ${esc(e.category)}</div>
-            </div>
-            <strong class="num">${esc(c)}${e.amount}</strong>
-          </div>
-        `).join('')}
-        <form id="form-add-expense" class="inline-form">
-          <input class="input input-grow" name="title" placeholder="Drinks, water, snacks..." required />
-          <input class="input" name="amount" type="number" placeholder="Amount" style="width:85px" required />
-          <select class="select" name="paidBy">
-            ${attendees.map((p) => `<option value="${p.id}">${esc(p.name)}</option>`).join('')}
-          </select>
-          <button class="btn btn-primary" type="submit" ${attendees.length === 0 ? 'disabled' : ''}>Add</button>
-        </form>
-      </div>
-
-      <div>
-        <div class="section-head">
-          <span class="section-title">Settlement</span>
-        </div>
-        ${transfers.length === 0 ? '<div class="muted">All settled</div>' : transfers.map((t) => {
-          const settled = state.splitSettings.settledPlayerIds.includes(t.fromId);
-          return `
-            <div class="row-item">
-              <div>
-                <strong style="${settled ? 'text-decoration:line-through; color:var(--muted);' : ''}">
-                  ${esc(t.from)} → ${esc(t.to)}
-                </strong>
-                <div class="muted num">${esc(c)}${t.amount}</div>
-              </div>
-              <button class="btn btn-sm ${settled ? 'btn-primary' : ''}" data-toggle-settled="${t.fromId}">
-                ${settled ? 'Paid' : 'Mark Paid'}
-              </button>
-            </div>
-          `;
-        }).join('')}
-      </div>
+    <div class="notice-bar" style="margin-bottom:0;">
+      <span>${esc(myBanner)}</span>
     </div>
 
     <div>
       <div class="section-head">
-        <span class="section-title">Per-Player Share</span>
+        <span class="section-title">Who Pays Whom</span>
+      </div>
+      ${transfers.length === 0 ? '<div class="muted">All settled</div>' : transfers.map((t) => {
+        const settled = state.splitSettings.settledPlayerIds.includes(t.fromId);
+        return `
+          <div class="row-item">
+            <div>
+              <strong style="${settled ? 'text-decoration:line-through; color:var(--muted);' : ''}">
+                ${esc(t.from)} → ${esc(t.to)}
+              </strong>
+              <div class="muted num">${esc(c)}${t.amount}</div>
+            </div>
+            <button class="btn btn-sm ${settled ? 'btn-primary' : ''}" data-toggle-settled="${t.fromId}">
+              ${settled ? 'Paid' : 'Mark Paid'}
+            </button>
+          </div>
+        `;
+      }).join('')}
+    </div>
+
+    <div>
+      <div class="section-head">
+        <span class="section-title">Expenses</span>
+      </div>
+      ${state.expenses.length === 0 ? '<div class="muted">No expenses logged yet.</div>' : state.expenses.map((e) => `
+        <div class="row-item">
+          <div>
+            <strong>${esc(e.title)}</strong>
+            <div class="muted">${esc(playerName(e.paidBy))} · ${esc(e.category)}</div>
+          </div>
+          <strong class="num">${esc(c)}${e.amount}</strong>
+        </div>
+      `).join('')}
+      <form id="form-add-expense" class="inline-form">
+        <input class="input input-grow" name="title" placeholder="Drinks, water, snacks..." required />
+        <input class="input" name="amount" type="number" placeholder="Amount" style="width:85px" required />
+        <select class="select" name="paidBy">
+          ${attendees.map((p) => `<option value="${p.id}">${esc(p.name)}</option>`).join('')}
+        </select>
+        <button class="btn btn-primary" type="submit" ${attendees.length === 0 ? 'disabled' : ''}>Add</button>
+      </form>
+    </div>
+
+    <div>
+      <div class="section-head">
+        <span class="section-title">Per-Player Breakdown</span>
       </div>
       <table class="score-table">
         <thead>
           <tr>
             <th>Player</th>
-            <th class="r">Attendance</th>
             <th class="r">Share</th>
             <th class="r">Paid</th>
-            <th class="r">Net</th>
+            <th>Pay / Collect</th>
           </tr>
         </thead>
         <tbody>
           ${ledger.map((l) => `
             <tr>
-              <td><strong>${esc(l.name)}</strong></td>
-              <td class="r">${esc(l.attendance)}</td>
+              <td>
+                <strong>${esc(l.name)}</strong>
+                <div class="muted" style="font-size:11px;">${esc(l.attendance)}</div>
+              </td>
               <td class="r">${esc(c)}${l.share}</td>
               <td class="r">${esc(c)}${l.paid}</td>
-              <td class="r">
+              <td>
                 <span class="badge ${l.net >= 0 ? 'badge-accent' : 'badge-dark'}">
-                  ${l.net >= 0 ? `+${esc(c)}${l.net}` : `-${esc(c)}${Math.abs(l.net)}`}
+                  ${esc(actionMap[l.id] || 'Settled')}
                 </span>
               </td>
             </tr>
