@@ -1,0 +1,10 @@
+{
+  "name": "pitchday",
+  "version": "1.0.0",
+  "description": "End-to-end game-day organizer, scorer, and expense splitter for informal turf & gully cricket.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "license": "MIT"
+}
