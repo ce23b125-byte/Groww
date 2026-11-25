@@ -391,6 +391,15 @@ function renderEntry() {
         <p class="muted" style="margin-top:6px;">Enter your details once, then join your group's room code or host a new game.</p>
       </div>
 
+      <div class="dark-strip" style="gap:10px;">
+        <div>
+          <span class="badge badge-accent">Sample Walkthrough</span>
+          <div style="font-size:15px; font-weight:500; margin-top:6px;">New here? Try a live turf session first.</div>
+          <div class="muted" style="margin-top:3px;">Explore pre-loaded 5v5 + Joker teams, ball-by-ball scoring, and Pay splits in room <strong style="color:var(--inverse-ink);">TURF84</strong>.</div>
+        </div>
+        <button class="btn btn-primary" id="btn-demo-room" style="width:100%;">Explore Sample Room (TURF84)</button>
+      </div>
+
       ${entryError ? `<div class="notice-bar dark"><span>${esc(entryError)}</span></div>` : ''}
 
       <div>
@@ -412,16 +421,12 @@ function renderEntry() {
       <div class="split-2">
         <div class="scorer-panel">
           <div class="section-head">
-            <span class="section-title">2. Join with Code</span>
+            <span class="section-title">2. Join with Room Code</span>
           </div>
           <form id="form-join-room" style="display:flex; flex-direction:column; gap:10px;">
-            <input class="input code-input" name="code" placeholder="TURF84" maxlength="8" required />
+            <input class="input code-input" name="code" placeholder="Enter 6-char code" maxlength="8" required />
             <button class="btn btn-primary" type="submit">Join Room</button>
           </form>
-          <div style="margin-top:14px; padding-top:12px; border-top:1px solid var(--hairline); display:flex; align-items:center; justify-content:space-between;">
-            <span class="muted">Want to explore first?</span>
-            <button class="btn btn-sm" id="btn-demo-room">Open Sample (TURF84)</button>
-          </div>
         </div>
 
         <div class="scorer-panel">
@@ -570,7 +575,7 @@ function renderGameDay() {
     </div>
 
     <div class="subnav">
-      <button class="subnav-btn ${gamedaySub === 'roster' ? 'active' : ''}" data-gd-sub="roster">Roster & Check-in</button>
+      <button class="subnav-btn ${gamedaySub === 'roster' ? 'active' : ''}" data-gd-sub="roster">Roster</button>
       <button class="subnav-btn ${gamedaySub === 'turf' ? 'active' : ''}" data-gd-sub="turf">Turf & Gear</button>
       <button class="subnav-btn ${gamedaySub === 'teams' ? 'active' : ''}" data-gd-sub="teams">Teams & Rules</button>
     </div>
@@ -585,31 +590,31 @@ function renderRoster() {
   return `
     <div>
       <div class="section-head">
-        <span class="section-title">Players (${state.players.filter((p) => p.rsvp === 'in').length} In · ${state.players.filter(isAvailable).length} Here)</span>
+        <span class="section-title">Players (${state.players.filter((p) => p.rsvp === 'in').length} In)</span>
         <button class="btn btn-sm" id="btn-copy-invite">Invite & Code</button>
       </div>
       <div>
         ${state.players.map((p) => `
           <div class="player-card-row">
-            <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
-              <div>
-                <strong>${esc(p.name)}</strong>
-                <span class="muted"> · ${esc(p.role)}</span>
-              </div>
-              <a class="btn btn-sm" href="tel:${esc(p.phone || '')}" data-call-player="${p.id}" style="text-decoration:none;">Call</a>
+            <div class="player-card-left">
+              <strong>${esc(p.name)}</strong>
+              <div class="muted">${esc(p.role)}</div>
             </div>
-            <div style="display:flex; align-items:center; justify-content:space-between; gap:6px; flex-wrap:wrap;">
-              <div class="seg-group">
-                <button class="seg-btn ${p.rsvp === 'in' ? 'active-accent' : ''}" data-rsvp="${p.id}:in">In</button>
-                <button class="seg-btn ${p.rsvp === 'maybe' ? 'active-dark' : ''}" data-rsvp="${p.id}:maybe">Maybe</button>
-                <button class="seg-btn ${p.rsvp === 'out' ? 'active-muted' : ''}" data-rsvp="${p.id}:out">Out</button>
+            <div class="player-card-right">
+              <div style="display:flex; align-items:center; gap:6px;">
+                <div class="seg-group">
+                  <button class="seg-btn ${p.rsvp === 'in' ? 'active-accent' : ''}" data-rsvp="${p.id}:in">In</button>
+                  <button class="seg-btn ${p.rsvp === 'maybe' ? 'active-dark' : ''}" data-rsvp="${p.id}:maybe">Maybe</button>
+                  <button class="seg-btn ${p.rsvp === 'out' ? 'active-muted' : ''}" data-rsvp="${p.id}:out">Out</button>
+                </div>
+                <a class="btn btn-sm" href="tel:${esc(p.phone || '')}" data-call-player="${p.id}" style="text-decoration:none;">Call</a>
               </div>
-              <div class="seg-group">
-                <button class="seg-btn ${p.checkedIn && p.status === 'active' ? 'active-accent' : ''}" data-checkin="${p.id}:active">Here</button>
-                <button class="seg-btn ${p.status === 'late' ? 'active-dark' : ''}" data-checkin="${p.id}:late">Late</button>
-                <button class="seg-btn ${p.status === 'left_early' ? 'active-dark' : ''}" data-checkin="${p.id}:left_early">Left</button>
-                <button class="seg-btn ${!p.checkedIn ? 'active-muted' : ''}" data-checkin="${p.id}:absent">Out</button>
-              </div>
+              ${p.rsvp !== 'out' ? `
+                <div class="seg-group">
+                  <button class="seg-btn ${p.status === 'on_the_way' ? 'active-accent' : ''}" data-checkin="${p.id}:on_the_way">On the way</button>
+                  <button class="seg-btn ${p.status === 'late' ? 'active-dark' : ''}" data-checkin="${p.id}:late">Late</button>
+                </div>
+              ` : ''}
             </div>
           </div>
         `).join('')}
@@ -1022,13 +1027,13 @@ function renderMatches() {
 
 /* ==================== TAB 3: PAY ==================== */
 function attendanceWeight(p) {
-  if (p.status === 'late' || p.status === 'left_early') return 0.6;
+  if (p.status === 'late') return 0.6;
   return 1;
 }
 
 function attendanceLabel(p) {
   if (p.status === 'late') return 'Late';
-  if (p.status === 'left_early') return 'Left early';
+  if (p.status === 'on_the_way') return 'On the way';
   return 'Full';
 }
 
@@ -1278,8 +1283,8 @@ function bindEvents() {
       const [id, status] = btn.dataset.checkin.split(':');
       const p = state.players.find((x) => x.id === id);
       if (p) {
-        p.status = status;
-        p.checkedIn = status !== 'absent';
+        p.status = p.status === status ? 'active' : status;
+        p.checkedIn = p.rsvp !== 'out';
         syncRosterConsistency(p);
         saveState();
       }
