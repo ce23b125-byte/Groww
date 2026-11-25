@@ -393,11 +393,15 @@ function renderEntry() {
 
       <div class="dark-strip" style="gap:10px;">
         <div>
-          <span class="badge badge-accent">Sample Walkthrough</span>
-          <div style="font-size:15px; font-weight:500; margin-top:6px;">New here? Try a live turf session first.</div>
-          <div class="muted" style="margin-top:3px;">Explore pre-loaded 5v5 + Joker teams, ball-by-ball scoring, and Pay splits in room <strong style="color:var(--inverse-ink);">TURF84</strong>.</div>
+          <span class="badge badge-accent">1-Tap Demo</span>
+          <div style="font-size:16px; font-weight:500; margin-top:6px;">First time? Tour a live turf day first.</div>
+          <div class="muted" style="margin-top:4px; line-height:1.5;">
+            • Roster, Turf Poll &amp; 1-Hr Alarm<br/>
+            • Live 5v5 + Joker Scorer &amp; Scorecard<br/>
+            • Who-Pays-Whom Expense Split
+          </div>
         </div>
-        <button class="btn btn-primary" id="btn-demo-room" style="width:100%;">Explore Sample Room (TURF84)</button>
+        <button class="btn btn-primary" id="btn-demo-room" style="width:100%;">Open Demo Game (TURF84)</button>
       </div>
 
       ${entryError ? `<div class="notice-bar dark"><span>${esc(entryError)}</span></div>` : ''}
@@ -421,10 +425,11 @@ function renderEntry() {
       <div class="split-2">
         <div class="scorer-panel">
           <div class="section-head">
-            <span class="section-title">2. Join with Room Code</span>
+            <span class="section-title">2. Join a Friend's Room</span>
           </div>
           <form id="form-join-room" style="display:flex; flex-direction:column; gap:10px;">
-            <input class="input code-input" name="code" placeholder="Enter 6-char code" maxlength="8" required />
+            <input class="input code-input" name="code" placeholder="TURF84" maxlength="8" required />
+            <div class="muted">Ask the host for their 6-letter code, or use <strong>TURF84</strong> for the demo.</div>
             <button class="btn btn-primary" type="submit">Join Room</button>
           </form>
         </div>
